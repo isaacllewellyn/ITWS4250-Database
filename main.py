@@ -120,10 +120,67 @@ def insert_actual_fish_stocking(fish_stocking_lists_2011_data):
                        "VALUES(%s,%s,%s,%s,%s,%s,FALSE,%s,%s)", (year, waterbody, month, number, species_name, size_inches, county, town))
     conn.commit()
 
+
+def insert_national_register_of_historic_places_data(national_register_of_historic_places_data):
+    cursor = conn.cursor()
+    for item in national_register_of_historic_places_data[1:]:
+        resource_name = item[0]
+        county = item[1].lower().title()
+
+        if not isinstance(item[2], str) and math.isnan(float(str(item[2]))):
+             nrdate = '11/11/1111'
+        else:
+            nrdate = item[2]
+        nrnumber = item[3]
+        location = item[6]
+
+        print(item, county, resource_name)
+        string = "Select * from county_historic where national_register_number = '" + nrnumber + "'"
+        cursor.execute(string)
+        results = cursor.fetchall()
+        if len(results) > 0:
+            continue
+
+        cursor.execute("INSERT INTO county_historic(resource_name, national_register_date, national_register_number, location, county_name) "
+                       "VALUES(%s,%s,%s,%s,%s)", (resource_name, nrdate, nrnumber, location , county))
+    conn.commit()
+
+
+    pass
+
+
+def insert_rec_fishing_rivers_and_streams_data(rec_fishing_rivers_and_streams_data):
+    cursor = conn.cursor()
+    for item in rec_fishing_rivers_and_streams_data[1:]:
+        waterbody_name = item[0]
+        fish_species_present = item[1].lower().title()
+        comments = item[2]
+        special_regulations = item[3]
+        county_name = item[4]
+        types_of_public_access   = item[5]
+        public_fishing_access_owner = item[6]
+        waterbody_information  = item[7]
+        lat = item[8]
+        long =  item[9]
+        location = item[10]
+
+        string = "Select * from waterbody_information where latitude = '" + lat + "'" + "and longitude = '" + long + "'"
+        cursor.execute(string)
+        results = cursor.fetchall()
+        if len(results) > 0:
+            continue
+
+        print(item)
+
+        cursor.execute("INSERT INTO waterbody_information(waterbody_name, fish_species_present, comments, special_regulations, types_of_public_access, public_fishing_access_owner, latitude, longitude, location, waterbody_information, county_name) VALUES(%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s)",
+                       (waterbody_name, fish_species_present, comments, special_regulations, types_of_public_access, public_fishing_access_owner, lat, long, location, waterbody_information, county_name))
+    conn.commit()
+
+    pass
+
+
 def import_data():
     county_town_data = set()
-
-
     current_season_spring_trout_stocking_data = csv_to_json("data/Current_Season_Spring_Trout_Stocking.csv")
     for item in current_season_spring_trout_stocking_data:
         mango = ""
@@ -150,6 +207,8 @@ def import_data():
     insert_county_towns(county_town_data)
     insert_planned_trout_stocking(current_season_spring_trout_stocking_data)
     insert_actual_fish_stocking(fish_stocking_lists_2011_data)
+    insert_national_register_of_historic_places_data(national_register_of_historic_places_data)
+    insert_rec_fishing_rivers_and_streams_data(rec_fishing_rivers_and_streams_data)
     pass
 
 info_page()
