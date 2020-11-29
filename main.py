@@ -94,7 +94,7 @@ def insert_planned_trout_stocking(current_season_spring_trout_stocking_data):
         species_name = item[7]
         size_inches = item[8]
         print(item, county, town)
-        cursor.execute("INSERT INTO stocking_information(year, waterbody, month, number, species, size_inches, trout, county_name, town_name) "
+        cursor.execute("INSERT INTO stocking_information(year, waterbody, month, number, species, size_inches, future, county_name, town_name) "
                        "VALUES(%s,%s,%s,%s,%s,%s,TRUE,%s,%s)", (year, waterbody, month, number, species_name, size_inches, county, town))
     conn.commit()
 
@@ -116,7 +116,7 @@ def insert_actual_fish_stocking(fish_stocking_lists_2011_data):
         size_inches = item[7]
 
         print(item, county, town)
-        cursor.execute("INSERT INTO stocking_information(year, waterbody, month, number, species, size_inches, trout, county_name, town_name) "
+        cursor.execute("INSERT INTO stocking_information(year, waterbody, month, number, species, size_inches, future, county_name, town_name) "
                        "VALUES(%s,%s,%s,%s,%s,%s,FALSE,%s,%s)", (year, waterbody, month, number, species_name, size_inches, county, town))
     conn.commit()
 
@@ -147,8 +147,8 @@ def import_data():
     # for item in rec_fishing_rivers_and_streams_data:
     #     county_town_data.update([item[4],""])
 
-    # insert_county_towns(county_town_data)
-    # insert_planned_trout_stocking(current_season_spring_trout_stocking_data)
+    insert_county_towns(county_town_data)
+    insert_planned_trout_stocking(current_season_spring_trout_stocking_data)
     insert_actual_fish_stocking(fish_stocking_lists_2011_data)
     pass
 
