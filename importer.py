@@ -92,30 +92,28 @@ def insert_national_register_of_historic_places_data(national_register_of_histor
     mycol1 = mydb["county_historic"]
     cursor = conn.cursor()
     x = 0
-    while x != 1:
-        for item in national_register_of_historic_places_data[1:]:
-            if x ==  1:
-                continue
-            resource_name = item[0]
-            county = item[1].lower().title()
+    for item in national_register_of_historic_places_data[1:]:
 
-            if not isinstance(item[2], str) and math.isnan(float(str(item[2]))):
-                 nrdate = '11/11/1111'
-            else:
-                nrdate = item[2]
-            nrnumber = item[3]
-            location = item[6]
+        resource_name = item[0]
+        county = item[1].lower().title()
 
-            print(item, county, resource_name)
-            string = "Select * from county_historic where national_register_number = '" + nrnumber + "'"
-            cursor.execute(string)
-            results = cursor.fetchall()
-            if len(results) > 0:
-                continue
+        if not isinstance(item[2], str) and math.isnan(float(str(item[2]))):
+             nrdate = '11/11/1111'
+        else:
+            nrdate = item[2]
+        nrnumber = item[3]
+        location = item[6]
 
-            cursor.execute("INSERT INTO county_historic(resource_name, national_register_date, national_register_number, location, county_name) "
-                           "VALUES(%s,%s,%s,%s,%s)", (resource_name, nrdate, nrnumber, location , county))
-            mycol1.insert_one({"resource_name": resource_name, "nrdate": nrdate, "nrnumber" : nrnumber, "location" : location, "county": county})
+        print(item, county, resource_name)
+        string = "Select * from county_historic where national_register_number = '" + nrnumber + "'"
+        cursor.execute(string)
+        results = cursor.fetchall()
+        if len(results) > 0:
+            continue
+
+        cursor.execute("INSERT INTO county_historic(resource_name, national_register_date, national_register_number, location, county_name) "
+                       "VALUES(%s,%s,%s,%s,%s)", (resource_name, nrdate, nrnumber, location , county))
+        mycol1.insert_one({"resource_name": resource_name, "nrdate": nrdate, "nrnumber" : nrnumber, "location" : location, "county": county})
 
 
     conn.commit()
