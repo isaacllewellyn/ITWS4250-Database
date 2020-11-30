@@ -20,10 +20,10 @@ def info_page():
                        ,,///;,   ,;/
                      o:::::::;;///          Welcome To Our Database Systems Project!
                     >::::::::;;\\\\\\       To select a menu, enter a number, then press enter. 
-                      ''\\\\\\\\\\'' ';\\                    1: Review Top Stocking Areas
+                      ''\\\\\\\\\\'' ';\\                          1: Review Top Stocking Areas
                                                              2: Get List of Counties To Explore
                                                    /         3: ?
-                                                  /--\\ /    4: ?                                  \\
+                                                  /--\\ /     4: ?                                 \\
                                                  <o)  =<                                      \\ /--\\
                                                   \\__/ \\                                      >=  (o>
                \\:.                                 \\                                          / \\__/  T~~
