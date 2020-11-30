@@ -19,7 +19,7 @@ def info_page():
                           .:/
                        ,,///;,   ,;/
                      o:::::::;;///          Welcome To Our Database Systems Project!
-                    >::::::::;;\\\\\\       To select a menu, enter a number, then press enter. 
+                    >::::::::;;\\\\\\                 To select a menu, enter a number: 
                       ''\\\\\\\\\\'' ';\\                          1: Review Top Stocking Areas
                                                              2: Get List of Counties To Explore
                                                    /         3: ?
