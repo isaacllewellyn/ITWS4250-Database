@@ -76,12 +76,12 @@ def get_county_options():
         print(x[0] + "\t  Site information: " + x[2] )
 
     cursor.execute(
-        "SELECT DISTINCT (waterbody,  species) FROM stocking_information WHERE county_name ilike %s",
+        "SELECT DISTINCT waterbody,  species FROM stocking_information WHERE county_name ilike %s",
         (selected_county_name,))
     result = cursor.fetchall()
     print("\nThe following stocked fishing spots are recommended in " + selected_county_name + " County:")
     for x in result:
-        print("Stocked Body and fish type: " + x[0])
+        print("Stocked Body " + x[0] + ", Fish type: "+  x[1])
 
     cursor.execute(
         "SELECT resource_name FROM county_historic WHERE county_name ilike %s ",
@@ -138,6 +138,7 @@ def info_page():
                     >::::::::;;\\\\\\                 To select a menu, enter a number: 
                       ''\\\\\\\\\\'' ';\\                          1: Review Top Stocking Areas
                                                              2: Get List of Counties To Explore
+                                                             
                                                    /         
                                                   /--\\ /                                      \\
                                                  <o)  =<                                      \\ /--\\
