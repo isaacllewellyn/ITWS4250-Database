@@ -88,7 +88,6 @@ def get_county_options():
         (selected_county_name,))
     result = cursor.fetchall()
     print("\nHere are 10 random historic places in the county for you to check out in the county: " + selected_county_name + ":")
-
     i = 0
     random.shuffle(result)
     for x in result:
@@ -102,12 +101,38 @@ def get_county_options():
     info_page()
 
 
+def get_newest_historic_places():
+    cursor = conn.cursor()
+    cursor.execute(
+        "select Resource_Name, National_Register_Date, County_name from County_historic order by National_Register_Date desc limit 10")
+    result = cursor.fetchall()
+    print(
+        "\nHere are the top 10 newest historic places in New York:")
+    for row in result:
+        print(row[0], " Register Date: " + str(row[1]) +" County: " + row[2])
+
+    date = input("\n Enter a date to check for the newest historic places up untill that date, otherwise, press enter to go to the main menu\n (year) or (year/mm/day) : ")
+    if len(str(date)) == 4:
+        date = date+"-01-01"
+    cursor.execute(
+        "select Resource_Name, National_Register_Date, County_name from County_historic where National_Register_Date < %s order by National_Register_Date desc limit 10", (date,))
+    result = cursor.fetchall()
+    print(
+        "\nHere are the top 10 newest historic places in New York before " + date)
+    for row in result:
+        print(row[0], " Register Date: " + str(row[1]) +" County: " + row[2])
+
+    input("Press enter to return back to the main menu")
+    info_page()
+
 
 def menu_select(menu_num):
     if (menu_num == 1):
         review_stocking_area()
     elif (menu_num == 2):
         get_county_options()
+    elif (menu_num == 3):
+        get_newest_historic_places()
     else:
         print("Error, selection is not valid!")
         menu_enter()
@@ -138,7 +163,7 @@ def info_page():
                     >::::::::;;\\\\\\                 To select a menu, enter a number: 
                       ''\\\\\\\\\\'' ';\\                          1: Review Top Stocking Areas
                                                              2: Get List of Counties To Explore
-                                                             
+                                                             3: Get the newest historic places to check out!
                                                    /         
                                                   /--\\ /                                      \\
                                                  <o)  =<                                      \\ /--\\
