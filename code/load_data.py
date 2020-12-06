@@ -157,7 +157,7 @@ def import_data():
     print("done loading schema")
     #Setup everything else
     county_town_data = set()
-    current_season_spring_trout_stocking_data = csv_to_json("code/datasets/Current_Season_Spring_Trout_Stocking.csv")
+    current_season_spring_trout_stocking_data = csv_to_json("datasets/Current_Season_Spring_Trout_Stocking.csv")
     for item in current_season_spring_trout_stocking_data:
         mango = ""
         mango += item[2].lower().title()
@@ -165,18 +165,18 @@ def import_data():
         mango += item[3].lower().title()
         # print(mango)
         county_town_data.update([mango])
-    fish_stocking_lists_2011_data             = csv_to_json("code/datasets/Fish_Stocking_Lists__Actual___Beginning_2011.csv")
+    fish_stocking_lists_2011_data             = csv_to_json("datasets/Fish_Stocking_Lists__Actual___Beginning_2011.csv")
     for item in fish_stocking_lists_2011_data:
         mango = ""
         mango += item[1].lower().title()
         mango += ":::"
         mango += str(item[3]).lower().title()
         county_town_data.update([mango])
-    national_register_of_historic_places_data = csv_to_json("code/datasets/National_Register_of_Historic_Places.csv")
+    national_register_of_historic_places_data = csv_to_json("datasets/National_Register_of_Historic_Places.csv")
     for item in national_register_of_historic_places_data:
         # county_town_data.update([item[1],""])
         print(item[1])
-    rec_fishing_rivers_and_streams_data       = csv_to_json("code/datasets/Recommended_Fishing_Rivers_And_Streams.csv")
+    rec_fishing_rivers_and_streams_data       = csv_to_json("datasets/Recommended_Fishing_Rivers_And_Streams.csv")
     # for item in rec_fishing_rivers_and_streams_data:
     #     county_town_data.update([item[4],""])
 
