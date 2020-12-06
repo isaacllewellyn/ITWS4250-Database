@@ -2,12 +2,12 @@
 #Used to display content to a user when first starting the applicationn
 import psycopg2
 import psycopg2.extras
-
+import random
 connection_string = "host='localhost' dbname='dbms_final_project' user='dbms_project_user' password='dbms_password'"
 conn = psycopg2.connect(connection_string, cursor_factory=psycopg2.extras.DictCursor)
 
 def review_stocking_area():
-    year = input("Enter the year to examine [2012-2020]: ")
+    year = input("Enter the year to examine [2011-2020]: ")
     bod_num = input("Enter the number of water bodies to examine: ")
     print("\n")
     cursor = conn.cursor()
@@ -16,7 +16,7 @@ def review_stocking_area():
     count = 1
     waterbody_names = []
     for x in result:
-        print("#" + str(count) + " " + str(x[0]) + " " + str(x[1]))
+        print("#" + str(count) + " Stocked Fish: " + str(x[0]) + "  \tLocation: " + str(x[1]))
         waterbody_names.append(x[1])
         count = count + 1
     
@@ -41,10 +41,12 @@ def review_stocking_area():
             print(y, end = '')
             count = count + 1
             if len(fish_set) > 1 and count != len(fish_set):
-                print(" and ", end = '')
+                print(" and ", end = '.')
+
+
     elif (selected_option == 's'):
-        waterbody_name = (waterbody_names[int(selected_waterbody)])
-        cursor.execute("SELECT species, number FROM stocking_information WHERE year = %s AND waterbody = %s", (year, waterbody_name,))
+        waterbody_name = (waterbody_names[int(selected_waterbody)-1])
+        cursor.execute("SELECT species, number  FROM stocking_information WHERE year = %s AND waterbody = %s", (year, waterbody_name,))
         result = cursor.fetchall()
         print("In " + str(year) + " the following trout were stocked in " + str(waterbody_name))
         for x in result:
@@ -67,16 +69,38 @@ def get_county_options():
         info_page()
     selected_county =  int(selected_county) - 1
     selected_county_name = county_list[selected_county]
-    cursor.execute("SELECT DISTINCT (waterbody_name), county_name FROM waterbody_information WHERE county_name = %s ORDER BY county_name ASC", (selected_county_name,))
+    cursor.execute("SELECT DISTINCT (waterbody_name), county_name, Waterbody_information FROM waterbody_information WHERE county_name ilike %s ORDER BY county_name ASC", (selected_county_name,))
     result = cursor.fetchall()
     print("\nThe following waterbodies are recommended for trout fishing in " + selected_county_name + " County:")
     for x in result:
+        print(x[0] + "\t  Site information: " + x[2] )
+
+    cursor.execute(
+        "SELECT DISTINCT (waterbody,  species) FROM stocking_information WHERE county_name ilike %s",
+        (selected_county_name,))
+    result = cursor.fetchall()
+    print("\nThe following stocked fishing spots are recommended in " + selected_county_name + " County:")
+    for x in result:
+        print("Stocked Body and fish type: " + x[0])
+
+    cursor.execute(
+        "SELECT resource_name FROM county_historic WHERE county_name ilike %s ",
+        (selected_county_name,))
+    result = cursor.fetchall()
+    print("\nHere are 10 random historic places in the county for you to check out in the county: " + selected_county_name + ":")
+
+    i = 0
+    random.shuffle(result)
+    for x in result:
+        i = i + 1
+        if i > 10:
+            continue
         print(x[0])
+
+
+    input("\nPress enter to go to main menu: ")
     info_page()
 
-
-def get_historic_sites_paired_with_fishing_spots():
-    pass
 
 
 def menu_select(menu_num):
@@ -84,8 +108,6 @@ def menu_select(menu_num):
         review_stocking_area()
     elif (menu_num == 2):
         get_county_options()
-    elif (menu_num == 3):
-        get_historic_sites_paired_with_fishing_spots()
     else:
         print("Error, selection is not valid!")
         menu_enter()
@@ -116,7 +138,7 @@ def info_page():
                     >::::::::;;\\\\\\                 To select a menu, enter a number: 
                       ''\\\\\\\\\\'' ';\\                          1: Review Top Stocking Areas
                                                              2: Get List of Counties To Explore
-                                                   /         3: Recommended fishing sites paired with historical sites
+                                                   /         
                                                   /--\\ /                                      \\
                                                  <o)  =<                                      \\ /--\\
                                                   \\__/ \\                                      >=  (o>

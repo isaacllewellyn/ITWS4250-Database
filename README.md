@@ -7,12 +7,17 @@ To import data:
  
  Then, run "python importer.py".
 
+To run project:
 
+ Make sure main.py "connection_string" is set along with the mongodb connection to whatever mongodb you have runnning.
+
+ Then, run "python importer.py"
 
 # Final Project Technical Information
 
 The `code` directory the code for our application. It uses python. Requirements to be installed are located within the "requirements.txt" file.
 
+The application loads our datasets into various tables throughout both databases. The main application helps users query the  database to find our more about fishing locations and historic locations around the State of New York.
 
 
 
@@ -34,22 +39,9 @@ The entry point to your application is a single script (`main.py`). It can be ru
 
 ### Organization
 
-Your database code should be separated from your application code, ideally in a separate file (e.g., `load_data/importer.py`). For this project, you can put all of your database-related code that one file if you'd like, but you're free to create additional python files in support of both your application and database code as you feel is appropriate.
+load_data.py : Data importer
 
-Your code should be readable, through the appropriate choice of method, field, and variable names, and the appropriate use of comments. Personally, I prefer "self-documenting" code to excessive comments. Something like this:
-
-```python
-user_county_input = input("Enter a county name")
-```
-
-is generally preferable to 
-
-```python
-# Allow the user to choose a county
-usr_ipt = input("Enter a county name")
-```
-
-
+main.py      : Main program
 
 ### Queries
 
