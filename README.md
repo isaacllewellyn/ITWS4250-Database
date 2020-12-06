@@ -15,7 +15,7 @@ To run project:
 
 # Final Project Technical Information
 
-The `code` directory the code for our application. It uses python. Requirements to be installed are located within the "requirements.txt" file.
+The `code` directory is for the code that runs our application. It uses python. Requirements to be installed are located within the "requirements.txt" file.
 
 The application loads our datasets into various tables throughout both databases. The main application helps users query the  database to find our more about fishing locations and historic locations around the State of New York.
 
