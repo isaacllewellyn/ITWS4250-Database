@@ -5,7 +5,7 @@ import math
 import pymongo
 
 #Connection string used to login to PostgreSQL and connectionn
-connection_string = "host = '' dbname='' user='' password=''"
+connection_string = "host='localhost' dbname='dbms_final_project' user='dbms_project_user' password='dbms_password'"
 conn = psycopg2.connect(connection_string, cursor_factory=psycopg2.extras.DictCursor)
 
 #Mongod connection string and client

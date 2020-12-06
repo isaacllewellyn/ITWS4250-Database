@@ -1,4 +1,5 @@
-CREATE TABLE County_information (
+
+CREATE TABLE IF NOT EXISTS County_information (
 
 County_name          TEXT ,
 Town_name          TEXT,
@@ -6,7 +7,7 @@ PRIMARY KEY (County_name, Town_name)
 
 );
 
-CREATE TABLE Stocking_information (
+CREATE TABLE IF NOT EXISTS Stocking_information (
 StockingIDD serial primary key,
 Year         INT,
 Waterbody         TEXT,
@@ -21,7 +22,7 @@ FOREIGN KEY (County_name, Town_name)
 REFERENCES County_information (County_name, Town_name)
 );
 
-CREATE TABLE Waterbody_information (
+CREATE TABLE IF NOT EXISTS Waterbody_information (
 
 Waterbody_Name               TEXT,
 Fish_Species_Present       TEXT,
@@ -38,7 +39,7 @@ PRIMARY KEY(Waterbody_Name, latitude, longitude)
 
 );
 
-CREATE TABLE County_historic (
+CREATE TABLE IF NOT EXISTS County_historic (
 
 Resource_Name             TEXT,
 National_Register_Date     DATE,

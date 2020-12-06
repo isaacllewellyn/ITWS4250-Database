@@ -7,7 +7,7 @@ connection_string = "host='localhost' dbname='dbms_final_project' user='dbms_pro
 conn = psycopg2.connect(connection_string, cursor_factory=psycopg2.extras.DictCursor)
 
 def review_stocking_area():
-    year = input("Enter the year to examine: ")
+    year = input("Enter the year to examine [2012-2020]: ")
     bod_num = input("Enter the number of water bodies to examine: ")
     print("\n")
     cursor = conn.cursor()
@@ -49,6 +49,7 @@ def review_stocking_area():
         print("In " + str(year) + " the following trout were stocked in " + str(waterbody_name))
         for x in result:
             print(str(x[0]) + ": " + str(x[1]))
+    input("\nPress enter to go to main menu: ")
     info_page()
 
 def get_county_options():
@@ -72,15 +73,19 @@ def get_county_options():
     for x in result:
         print(x[0])
     info_page()
-        
-        
+
+
+def get_historic_sites_paired_with_fishing_spots():
+    pass
+
+
 def menu_select(menu_num):
     if (menu_num == 1):
         review_stocking_area()
     elif (menu_num == 2):
         get_county_options()
     elif (menu_num == 3):
-        print("three")
+        get_historic_sites_paired_with_fishing_spots()
     else:
         print("Error, selection is not valid!")
         menu_enter()
@@ -111,7 +116,7 @@ def info_page():
                     >::::::::;;\\\\\\                 To select a menu, enter a number: 
                       ''\\\\\\\\\\'' ';\\                          1: Review Top Stocking Areas
                                                              2: Get List of Counties To Explore
-                                                   /         3: Trout sites near random historical sites
+                                                   /         3: Recommended fishing sites paired with historical sites
                                                   /--\\ /                                      \\
                                                  <o)  =<                                      \\ /--\\
                                                   \\__/ \\                                      >=  (o>

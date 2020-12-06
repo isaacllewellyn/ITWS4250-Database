@@ -10,17 +10,6 @@ conn = psycopg2.connect(connection_string, cursor_factory=psycopg2.extras.DictCu
 myclient = pymongo.MongoClient("mongodb://localhost:27017/")
 mydb = myclient["mydatabase"]
 
-def tearDown(self):
-    print('done')
-
-def query( query, parameters=()):
-    cursor = conn.cursor()
-    cursor.execute(query, parameters)
-    return cursor.fetchall()
-
-
-###TODO NoSQL Database Installation
-
 
 #Import data
 #https://stackoverflow.com/a/56241768
@@ -32,18 +21,20 @@ def csv_to_json(filename, header=None):
 
 def insert_county_towns(county_town_data):
     mycol = mydb["county_towns"]
+    mycol.drop()
     cursor = conn.cursor()
     for item in county_town_data:
         county = item.split(":::")[0]
         town = item.split(":::")[1]
         print(item, county, town)
-        cursor.execute("INSERT INTO county_information(county_name, town_name) VALUES(%s,%s)", (county, town))
+        cursor.execute("INSERT INTO county_information(county_name, town_name) VALUES(%s,%s)  ON CONFLICT DO NOTHING", (county, town))
         mycol.insert_one({"county" : county, "town" : town})
     conn.commit()
 
 
 def insert_planned_trout_stocking(current_season_spring_trout_stocking_data):
     mycol = mydb["stocking_information"]
+    mycol.drop()
     cursor = conn.cursor()
     for item in current_season_spring_trout_stocking_data[1:]:
         year = item[0]
@@ -57,7 +48,7 @@ def insert_planned_trout_stocking(current_season_spring_trout_stocking_data):
         size_inches = item[8]
         print(item, county, town)
         cursor.execute("INSERT INTO stocking_information(year, waterbody, month, number, species, size_inches, future, county_name, town_name) "
-                       "VALUES(%s,%s,%s,%s,%s,%s,TRUE,%s,%s)", (year, waterbody, month, number, species_name, size_inches, county, town))
+                       "VALUES(%s,%s,%s,%s,%s,%s,TRUE,%s,%s)  ON CONFLICT DO NOTHING", (year, waterbody, month, number, species_name, size_inches, county, town))
         mycol.insert_one({"year": year, "waterbody": waterbody, "month" : month, "number" : number, "species_name": species_name, "size_inches":size_inches, "Future": True, "county":county, "town":town})
 
     conn.commit()
@@ -65,6 +56,8 @@ def insert_planned_trout_stocking(current_season_spring_trout_stocking_data):
 
 def insert_actual_fish_stocking(fish_stocking_lists_2011_data):
     mycol = mydb["stocking_information"]
+    mycol.drop()
+
     cursor = conn.cursor()
     for item in fish_stocking_lists_2011_data[1:]:
         year = item[0]
@@ -82,7 +75,7 @@ def insert_actual_fish_stocking(fish_stocking_lists_2011_data):
 
         print(item, county, town)
         cursor.execute("INSERT INTO stocking_information(year, waterbody, month, number, species, size_inches, future, county_name, town_name) "
-                       "VALUES(%s,%s,%s,%s,%s,%s,FALSE,%s,%s)", (year, waterbody, month, number, species_name, size_inches, county, town))
+                       "VALUES(%s,%s,%s,%s,%s,%s,FALSE,%s,%s)  ON CONFLICT DO NOTHING", (year, waterbody, month, number, species_name, size_inches, county, town))
         mycol.insert_one({"year": year, "waterbody": waterbody, "month" : month, "number" : number, "species_name": species_name, "size_inches":size_inches, "future" : False, "county":county, "town":town})
 
     conn.commit()
@@ -90,8 +83,9 @@ def insert_actual_fish_stocking(fish_stocking_lists_2011_data):
 
 def insert_national_register_of_historic_places_data(national_register_of_historic_places_data):
     mycol1 = mydb["county_historic"]
+    mycol1.drop()
+
     cursor = conn.cursor()
-    x = 0
     for item in national_register_of_historic_places_data[1:]:
 
         resource_name = item[0]
@@ -112,7 +106,7 @@ def insert_national_register_of_historic_places_data(national_register_of_histor
             continue
 
         cursor.execute("INSERT INTO county_historic(resource_name, national_register_date, national_register_number, location, county_name) "
-                       "VALUES(%s,%s,%s,%s,%s)", (resource_name, nrdate, nrnumber, location , county))
+                       "VALUES(%s,%s,%s,%s,%s)  ON CONFLICT DO NOTHING", (resource_name, nrdate, nrnumber, location , county))
         mycol1.insert_one({"resource_name": resource_name, "nrdate": nrdate, "nrnumber" : nrnumber, "location" : location, "county": county})
 
 
@@ -122,6 +116,7 @@ def insert_national_register_of_historic_places_data(national_register_of_histor
 
 def insert_rec_fishing_rivers_and_streams_data(rec_fishing_rivers_and_streams_data):
     mycol = mydb["waterbody_information"]
+    mycol.drop()
 
     cursor = conn.cursor()
     for item in rec_fishing_rivers_and_streams_data[1:]:
@@ -145,7 +140,7 @@ def insert_rec_fishing_rivers_and_streams_data(rec_fishing_rivers_and_streams_da
 
         print(item)
 
-        cursor.execute("INSERT INTO waterbody_information(waterbody_name, fish_species_present, comments, special_regulations, types_of_public_access, public_fishing_access_owner, latitude, longitude, location, waterbody_information, county_name) VALUES(%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s)",
+        cursor.execute("INSERT INTO waterbody_information(waterbody_name, fish_species_present, comments, special_regulations, types_of_public_access, public_fishing_access_owner, latitude, longitude, location, waterbody_information, county_name) VALUES(%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s)  ON CONFLICT DO NOTHING",
                        (waterbody_name, fish_species_present, comments, special_regulations, types_of_public_access, public_fishing_access_owner, lat, long, location, waterbody_information, county_name))
         mycol.insert_one(   {"waterbody_name": waterbody_name, "fish_species_present": fish_species_present, "comments" : comments, "special_regulations" : special_regulations, "types_of_public_access": types_of_public_access, "lat" : lat, "long" : long, "waterbody_information":waterbody_information, "county_name":county_name})
 
@@ -157,7 +152,9 @@ def insert_rec_fishing_rivers_and_streams_data(rec_fishing_rivers_and_streams_da
 def import_data():
     # Create the schema
     cursor = conn.cursor()
+    print("loading schema")
     cursor.execute(open("schema.sql", "r").read())
+    print("done loading schema")
     #Setup everything else
     county_town_data = set()
     current_season_spring_trout_stocking_data = csv_to_json("code/datasets/Current_Season_Spring_Trout_Stocking.csv")
