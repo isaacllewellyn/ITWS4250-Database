@@ -33,7 +33,6 @@ def review_stocking_area():
         for x in result:
             county_name = x[8]
             fish_set.add(x[5])
-            # print(x)
         print(waterbody_name + " is located in " + county_name + " County.")
         print(str(len(fish_set)) + " type(s) of trout have been recorded in this waterbody, including ", end = '')
         count = 0
@@ -125,7 +124,49 @@ def get_newest_historic_places():
     input("Press enter to return back to the main menu")
     info_page()
 
-
+def get_spots_in_town():
+    print("Here's a list of all NYS counties:")
+    cursor = conn.cursor()
+    cursor.execute("SELECT DISTINCT county_name FROM County_information ORDER BY county_name ASC")
+    count = 1
+    county_list = []
+    result = cursor.fetchall()
+    for x in result:
+        print("#" + str(count) + " " + str(x[0]))
+        county_list.append(x[0])
+        count = count + 1  
+    selected_county = input("Select a county number, or enter 'b' to return the start menu: ")
+    if (selected_county == 'b'):
+        info_page()
+    selected_county =  int(selected_county) - 1
+    selected_county_name = county_list[selected_county]
+    cursor.execute("SELECT DISTINCT town_name FROM County_information WHERE county_name = %s ORDER BY town_name ASC", (selected_county_name,))
+    count = 1
+    town_list = []
+    result = cursor.fetchall()
+    for x in result:
+        print("#" + str(count) + " " + str(x[0]))
+        town_list.append(x[0])
+        count = count + 1      
+    selected_town = input("\nSelect a town by number: ")
+    selected_town =  int(selected_town) - 1
+    selected_town_name = town_list[selected_town]
+    cursor.execute(
+        "SELECT DISTINCT(a.waterbody), B.town_name, B.county_name FROM stocking_information a, county_information b WHERE a.county_name = %s and b.town_name = %s and a.county_name = b.county_name and a.town_name = b.town_name;", (selected_county_name,selected_town_name,))
+    result = cursor.fetchall()
+    print("Check out these spots for stocked fishing in " + selected_town_name + ":")
+    for row in result:
+        print(row[0])
+    selected_county = input("Enter 'b' to return the start menu, or enter anything else to find the largest single trout recorded in your searched town: ")
+    if (selected_county == 'b'):
+        info_page()
+    #This search ignores ranges (ex: 9-10 inches) and only returns the largest trout recorded)
+    cursor.execute("SELECT DISTINCT(a.waterbody), CAST(size_inches AS float) FROM stocking_information a, county_information b WHERE a.county_name = %s and b.town_name = %s and a.county_name = b.county_name and a.town_name = b.town_name and size_inches NOT LIKE '%%-%%' ORDER BY size_inches DESC LIMIT 1;", (selected_county_name,selected_town_name,))
+    result = cursor.fetchone()
+    print("The largest recorded trout in " + selected_town_name + " was " +  str(result[1]) + " inches large in the " + str(result[0]) + " waterbody.")
+    info_page()
+    
+    
 def menu_select(menu_num):
     if (menu_num == 1):
         review_stocking_area()
@@ -133,6 +174,8 @@ def menu_select(menu_num):
         get_county_options()
     elif (menu_num == 3):
         get_newest_historic_places()
+    elif (menu_num == 4):
+        get_spots_in_town()
     else:
         print("Error, selection is not valid!")
         menu_enter()
@@ -161,9 +204,11 @@ def info_page():
                        ,,///;,   ,;/
                      o:::::::;;///          Welcome To Our Database Systems Project!
                     >::::::::;;\\\\\\                 To select a menu, enter a number: 
-                      ''\\\\\\\\\\'' ';\\                          1: Review Top Stocking Areas
-                                                             2: Get List of Counties To Explore
-                                                             3: Get the newest historic places to check out!
+                      ''\\\\\\\\\\'' ';\\                    1: Review Top Stocking Areas
+                                                                2: Get List of Counties To Explore
+                                                                    3: Get the newest historic places to check out!
+                                                                4. Get a list of stocked places in a town, and
+                                                                        largest trout recorded in a waterbody 
                                                    /         
                                                   /--\\ /                                      \\
                                                  <o)  =<                                      \\ /--\\
